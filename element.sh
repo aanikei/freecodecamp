@@ -1,11 +1,15 @@
 #!/bin/bash
 PSQL="psql -X --username=freecodecamp --dbname=periodic_table --tuples-only -c"
 
-echo -e "\nPlease provide an element as an argument."
-
 if [[ ! -z $1 ]]
 then
-  RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM properties INNER JOIN elements USING(atomic_number) WHERE atomic_number = $1 OR symbol = '$1' OR name = '$1';")
+  if [[ $1 =~ ^[0-9]+$ ]]
+  then
+    RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM properties INNER JOIN elements USING(atomic_number) WHERE atomic_number = $1;")
+  else
+    RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM properties INNER JOIN elements USING(atomic_number) WHERE symbol = '$1' OR name = '$1';")
+  fi
+  
   if [[ ! -z $RESULT ]]
   then
     read atomic_number BAR name BAR symbol BAR type BAR atomic_mass BAR melting_point_celsius BAR boiling_point_celsius <<< $(echo "$RESULT")
@@ -13,4 +17,6 @@ then
   else
     echo "I could not find that element in the database."
   fi
+else
+  echo "Please provide an element as an argument."
 fi
