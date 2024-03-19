@@ -5,9 +5,9 @@ if [[ ! -z $1 ]]
 then
   if [[ $1 =~ ^[0-9]+$ ]]
   then
-    RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM properties INNER JOIN elements USING(atomic_number) WHERE atomic_number = $1;")
+    RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM properties INNER JOIN elements USING(atomic_number) INNER JOIN types USING (type_id) WHERE atomic_number = $1;")
   else
-    RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM properties INNER JOIN elements USING(atomic_number) WHERE symbol = '$1' OR name = '$1';")
+    RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM properties INNER JOIN elements USING(atomic_number) INNER JOIN types USING (type_id) WHERE symbol = '$1' OR name = '$1';")
   fi
   
   if [[ ! -z $RESULT ]]
